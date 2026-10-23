@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::create('modules', function (Blueprint $table) {
             $table->id('id_module');
             $table->string('description', 255);
+            $table->unsignedBigInteger('id_course');
             $table->boolean('active');
             $table->timestamps();
+
+            $table->foreign('id_course')->references('id_course')->on('courses')->onDelete('cascade');
         });
     }
 

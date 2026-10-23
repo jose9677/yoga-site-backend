@@ -15,16 +15,19 @@ class ModuleSedder extends Seeder
     {
         Module::create([
             'description' => 'MODULO-1',
+            'id_course' => 1,
             'active' => true,
         ]);
 
         Module::create([
             'description' => 'MODULO-2',
+            'id_course' => 1,
             'active' => true,
         ]);
 
         Module::create([
             'description' => 'MODULO-3',
+            'id_course' => 1,
             'active' => true,
         ]);
     }

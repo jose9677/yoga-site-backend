@@ -15,18 +15,21 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
 
 #[Fillable(
-    [ 'identity',
+    [   'email',
         'p_a',
         's_a',
         'p_n',
         's_n',
-        'email',
+        'login',
         'password',
         'active',
         'email_active',
         'id_rol',
         'otp',
-        'api_token'
+        'api_token',
+        'landline',
+        'mobile_phone',
+        'blocked',
     ])
 ]
 
@@ -65,22 +68,23 @@ class User extends Authenticatable
                                 ->pluck('id_action')
                                 ->toArray();
 
-        $user_actions = UserAction::where('identity', $this->identity)
+        /* $user_actions = UserAction::where('identity', $this->identity)
                                 ->pluck('id_action')
-                                ->toArray();
+                                ->toArray(); */
 
-        return array_unique(array_merge($rol_actions, $user_actions));
+        //return array_unique(array_merge($rol_actions, $user_actions));
+        return array_unique($rol_actions);
     }
 
     public function register($request)
     {
           $user = User::create([
-            'identity' => $request->identity,
             'p_a' => Str::upper($request->p_a),
             's_a' => Str::upper($request->s_a),
             'p_n' => Str::upper($request->p_n),
             's_n' => Str::upper($request->s_n),
             'email' => $request->email,
+            'login' => $request->login,
             'password' => $request->password,
             'active' => false,
             'email_active' => false,
@@ -138,10 +142,11 @@ class User extends Authenticatable
 
     public function changePassword(Request $request)
     {
-        $new_pass = User::query()->where('identity', $request->identity)->update(['password' => Hash::make($request->password)]);
+        $new_pass = User::query()->where('email', $request->email)->update(['password' => Hash::make($request->password)]);
     }
 
     protected $table = 'users';
-    protected $primaryKey = 'identity';
+    protected $primaryKey = 'email';
     public $incrementing = false;
+    protected $keyType = 'string';
 }

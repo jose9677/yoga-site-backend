@@ -23,11 +23,11 @@ class HTTPTrackingListener
             if ($request->is('api/*')) {
                 
                 $log = new Tracking();
-                $identity = null;
+                $email = null;
 
                 // 1. Si Sanctum ya identificó al usuario, lo extraemos directo de memoria
                 if ($request->user()) {
-                    $identity = $request->user()->identity;
+                    $email = $request->user()->email;
                 } else {
                     // 2. Si es una ruta pública, usamos el esqueleto URI para verificar tu config/env.php
                     $current_uri = $request->route()?->uri();
@@ -37,32 +37,32 @@ class HTTPTrackingListener
                         case ($current_uri == config('env.restartUser')):
                         case ($current_uri == config('env.validateUser')):
                         case ($current_uri == config('env.registeUser')):
-                            $identity = $request->input('identity');
+                            $email = $request->input('email');
                             break;
 
                         case ($current_uri == config('env.changePassword')):
                             if ($request->has('api_token')) {
-                                $identity = User::where('api_token', $request->api_token)->value('identity');
+                                $email = User::where('api_token', $request->api_token)->value('email');
                             }
                             break;
 
                         case (str_starts_with($current_uri, config('env.refreshOTP'))):
-                            $identity = $request->route('result'); 
+                            $email = $request->route('result'); 
                             break;
 
                         case ($current_uri == config('env.validateEmail')):
                             if ($request->has('otp')) {
-                                $identity = User::where('otp', $request->otp)->value('identity');
+                                $email = User::where('otp', $request->otp)->value('email');
                             }
                             break;
                             
                         default:
-                            $identity = 'Anónimo/Público';
+                            $email = 'Anónimo/Público';
                             break;
                     }
                 }
 
-                $log->identity = $identity ?? 'Anónimo/Público';
+                $log->email = $email ?? 'Anónimo/Público';
                 $log->route = $request->fullUrl();
                 $log->method = $request->method();
                 $log->ip = $request->ip();

@@ -14,8 +14,13 @@ return new class extends Migration
         Schema::create('personal_access_tokens', function (Blueprint $table) {
             $table->id();
             //$table->morphs('tokenable');
+            //$table->string('tokenable_type');
+            //$table->unsignedBigInteger('tokenable_id'); // Si identity es un número entero
+            // Definición manual de las columnas polimórficas para soportar 'email' (string)
             $table->string('tokenable_type');
-            $table->unsignedBigInteger('tokenable_id'); // Si identity es un número entero
+            $table->string('tokenable_id');
+            $table->index(['tokenable_type', 'tokenable_id']); // Índice compuesto para rendimiento
+            // (La línea original solía ser $table->morphs('tokenable'); que crea BIGINT)
             $table->text('name');
             $table->string('token', 64)->unique();
             $table->text('abilities')->nullable();

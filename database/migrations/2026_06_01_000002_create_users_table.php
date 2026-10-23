@@ -12,17 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('identity')->primary();
+            $table->string('email')->primary();
             $table->string('p_a', 255);
             $table->string('s_a', 255)->nullable();
             $table->string('p_n', 255);
             $table->string('s_n', 255)->nullable();
-            $table->string('email')->unique();
+            $table->string('login')->unique();
             $table->string('password');
             $table->boolean('active');
             $table->boolean('email_active');
             $table->string('otp', 6)->nullable();
             $table->string('api_token')->nullable();
+            $table->text('landline')->nullable();
+            $table->text('mobile_phone')->nullable();
+            $table->boolean('blocked')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
@@ -41,8 +44,13 @@ return new class extends Migration
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             // Enlace explícito a la columna identity de usuarios
-            $table->unsignedBigInteger('identity')->nullable()->index();
-            $table->foreign('identity')->references('identity')->on('users')->onDelete('cascade');
+
+            // Mantenemos el nombre 'user_id' para que Laravel no explote.
+            // Lo hacemos de tipo 'string' para que coincida con tu nueva clave primaria (email)
+            $table->string('user_id')->nullable()->index();
+
+            //$table->string('email')->nullable()->index();
+            $table->foreign('user_id')->references('email')->on('users')->onDelete('cascade');
             //$table->foreignId('user_id')->nullable()->index();
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();

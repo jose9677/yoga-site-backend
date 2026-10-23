@@ -19,15 +19,15 @@ use Illuminate\Validation\ValidationException;
 class AuthController extends Controller
 {
     public function register(Request $request)
-{
+    {
      Log::info($request);
         $validator = Validator::make($request->all(), [
-            'identity' => 'required|min:1|max:8',
             'p_a' => 'required|string',
             's_a' => 'nullable|string',
             'p_n' => 'required|string',
             's_n' => 'nullable|string',
             'email' => 'required|email',
+            'login' => 'required|string',
             
             'password' => [ 'required',
                             Password::min(8)
@@ -47,7 +47,7 @@ class AuthController extends Controller
     }
 
     $exists = User::where([
-        "identity" => $request->identity
+        "email" => $request->email
     ])->get();
 
     if ($exists->count()) {
@@ -88,18 +88,18 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'identity' => 'required|min:1|max:8',
+            'email' => 'required|email',
             'password' => 'required',
             'device_name' => 'required', // Útil para identificar de dónde viene el token
         ]);
 
-        $user = User::where('identity', $request->identity)->first();
+        $user = User::where('email', $request->email)->first();
         
         if (!$user) {
             return response()->json(['error' => 'User does not exists in DB', 'code' => '002'], 401);
         }
 
-        $active = User::where('identity', $request->identity)->value('active');
+        $active = User::where('email', $request->email)->value('active');
         
         if ($active == false) {
             return response()->json(['error' => 'Inactive User', 'code' => '003'], 400);
@@ -107,7 +107,7 @@ class AuthController extends Controller
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
-                'identity' => ['Las credenciales son incorrectas.'],
+                'email' => ['Las credenciales son incorrectas.'],
             ]);
         }
         
@@ -223,7 +223,7 @@ class AuthController extends Controller
     {
         Log::info($request);
         $validator = Validator::make($request->all(),[
-            'identity' => 'required|min:1|max:8',
+            'email' => 'required|email',
             'password' => ['required',
                 Password::min(8)
                         ->letters()
@@ -238,7 +238,7 @@ class AuthController extends Controller
         }
 
         $user = User::where([
-            'identity' => $request->identity
+            'email' => $request->email
         ])->get();
 
         if (!$user->count()) {
