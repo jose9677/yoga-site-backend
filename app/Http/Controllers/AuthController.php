@@ -107,7 +107,7 @@ class AuthController extends Controller
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
-                'email' => ['Las credenciales son incorrectas.'],
+                'email' => ['The credentials are incorrect.'],
             ]);
         }
         
@@ -118,7 +118,7 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Usuario autenticado correctamente',
+            'message' => 'User successfully authenticated',
             'data' => [
                 'user' => $user,
                 'token' => $token, // Este es el que el cliente debe guardar
@@ -144,9 +144,9 @@ class AuthController extends Controller
         return response()->json($data);
     }
 
-    public function getUserById($identity)
+    public function getUserById($email)
     {
-        $data = User::findOrFail($identity);
+        $data = User::findOrFail($email);
 
         return response()->json($data);
     }
@@ -155,7 +155,7 @@ class AuthController extends Controller
     {
         Log::info($request);
         $validator = Validator::make($request->all(),[
-            'identity' => 'required|min:1|max:8',
+            'email' => 'required|email',
             'otp' => 'required'
         ]);
 
@@ -173,7 +173,7 @@ class AuthController extends Controller
 
             //ENVIAR CORREO DE AVISO DE ACTIVACION...
             $user->validateEmail($request);
-            return response()->json(['message' => 'Email validated succesfull'], 200);
+            return response()->json(['message' => 'Email ' . $request->email . ' validated succesfull'], 200);
             
             } catch (Exception $e) {
                 return $e->getMessage();
@@ -187,7 +187,7 @@ class AuthController extends Controller
     {
         Log::info($request);
         $validator = Validator::make($request->all(),[
-            'identity' => 'required|min:1|max:8'
+            'email' => 'required|email'
         ]);
 
         if ($validator->fails()) {
@@ -195,7 +195,7 @@ class AuthController extends Controller
         }
 
         $user = User::where([
-            'identity' => $request->identity
+            'email' => $request->email
         ])->get();
     
         if (!$user->count()) {
@@ -205,7 +205,7 @@ class AuthController extends Controller
         DB::beginTransaction();
         try {
             $user = new User();
-            $data = User::where('identity', $request->identity)->first('email', 'api_token');
+            $data = User::where('email', $request->email)->first('email', 'api_token');
             //$app_url = env('APP_URL');
             $user = $user->validateUser($request);
             
@@ -216,7 +216,7 @@ class AuthController extends Controller
             return $e->getMessage();
         }
 
-        return response()->json(['message' => 'User Validation successfull'], 200);
+        return response()->json(['message' => 'User Validation ' . $data->email . ' successfull'], 200);
     }
 
     public function changePassword(Request $request)
@@ -248,10 +248,9 @@ class AuthController extends Controller
         DB::beginTransaction();
         try {
             $user = new User();
-            //$email = User::where('identity', $request->identity)->value('email');
             $user->changePassword($request);
 
-            //Mail::to($email)->queue(new CambioContraseñaMailable());
+            //Mail::to($request->email)->queue(new CambioContraseñaMailable());
             DB::commit();
             return response()->json(['message' => 'Password renoved'], 200);
         } catch (Exception $e) {
@@ -260,41 +259,49 @@ class AuthController extends Controller
         }
     }
 
-    public function activeUser($identity)
+    public function activeUser($email)
     {
-        $user = User::where([
-            'identity' => $identity
-        ])->get();
+        // 1. Buscamos al usuario con first()
+        $user = User::where('email', $email)->first();
 
-        if (!$user->count()) {
+        // 2. Si no existe, devolvemos el error de inmediato
+        if (!$user) {
             return response()->json(['error' => 'User does not exists in DB', 'code' => '002'], 400);
         }
 
-        $data = User::query()->where('identity', $identity)->update(['active' => true]);
+        // 3. Asignamos el booleano nativo
+        $user->active = true;
+        
+        // 4. Guardamos los cambios usando el modelo
+        $user->save();
 
-        return response()->json(['message' => 'User Actived successfull'], 200);
+        return response()->json(['message' => "User Actived {$email} successfull"], 200);
     }
 
-    public function desactiveUser($identity)
+    public function desactiveUser($email)
     {
-        $user = User::where([
-            'identity' => $identity
-        ])->get();
+         // 1. Buscamos al usuario con first()
+        $user = User::where('email', $email)->first();
 
-        if (!$user->count()) {
+        // 2. Si no existe, devolvemos el error de inmediato
+        if (!$user) {
             return response()->json(['error' => 'User does not exists in DB', 'code' => '002'], 400);
         }
 
-        $data = User::query()->where('identity', $identity)->update(['active' => false]);
+        // 3. Asignamos el booleano nativo
+        $user->active = false;
+        
+        // 4. Guardamos los cambios usando el modelo
+        $user->save();
 
-        return response()->json(['message' => 'User Desactived successfull'], 200);
+        return response()->json(['message' => "User Desactived {$email} successfull"], 200);
     }
 
     public function refreshOTP(Request $request)
     {
         Log::info($request);
         $validator = Validator::make($request->all(), [
-            'identity' => 'required|min:1|max:8'
+            'email' => 'required|email'
         ]);
 
         if ($validator->fails()) {
@@ -302,14 +309,14 @@ class AuthController extends Controller
         }
 
         $user = User::where([
-            'identity' => $request->identity
+            'email' => $request->email
         ])->get();
     
         if (!$user->count()) {
             return response()->json(['error' => 'User does not exists in Data Base', 'code' => '002'], 400);
         }
 
-        $otp = User::where('identity', $request->identity)->value('otp');
+        $otp = User::where('email', $request->email)->value('otp');
         
         if (!empty($otp)) {
             try {
@@ -328,7 +335,7 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'OTP Updated',
             'new_otp' => $new_otp,
-            'identity' => $request->identity
+            'email' => $request->email
             ], 200);
     }
 }

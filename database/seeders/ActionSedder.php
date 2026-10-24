@@ -28,5 +28,21 @@ class ActionSedder extends Seeder
             'route' => 'api/auth/{identity}',
             'method' => 'GET'
         ]);
+
+        Action::create([
+            'description' => 'ACTIVAR-USUARIO',
+            'active' => true,
+            'id_module' => 1,
+            'route' => 'api/auth/active-user/{email}',
+            'method' => 'PUT'
+        ]);
+
+        Action::create([
+            'description' => 'DESACTIVAR-USUARIO',
+            'active' => true,
+            'id_module' => 1,
+            'route' => 'api/auth/desactive-user/{email}',
+            'method' => 'PUT'
+        ]);
     }
 }

@@ -11,6 +11,10 @@ class Rol extends Model
         'active'
     ];
 
+    protected $casts = [
+        'active' => 'boolean',
+    ];
+
     protected $table = 'roles';
     protected $primaryKey = 'id_rol';
     public $incrementing = false;

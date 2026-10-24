@@ -54,6 +54,9 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'active' => 'boolean',
+            'email_active' => 'boolean',
+            'blocked' => 'boolean',
         ];
     }
 
@@ -114,27 +117,30 @@ class User extends Authenticatable
 
     public function refreshOTP(Request $request)
     {
-            $new_otp = $this->generateCodOtp();
+            $new_otp = $this->generateOtp();
 
-            $query = User::query()->where('identity', $request->identity)->update(['otp' => $new_otp]);
-            $email = User::where('identity', $request->identity)->value('email');
+            $query = User::query()->where('email', $request->email)->update(['otp' => $new_otp]);
+            $email = User::where('email', $request->email)->value('email');
             
             return $new_otp;
     }
 
     public function validateEmail(Request $request)
     {
-        $email = User::where('otp', $request->otp)->value('email');
-        User::query()->where('otp', $request->otp)->update(['otp' => null, 'email_active' => true]);
+        User::query()->where('otp', $request->otp)->update([
+            'otp' => null, 
+            'email_active' => true,
+            'email_verified_at' => now()
+            ]);
     }
 
      public function validateUser(Request $request)
     {
-        $data = User::query()->where('identity', $request->identity)->first(['email_active', 'otp']);
+        $data = User::query()->where('email', $request->email)->first(['email_active', 'otp']);
         
         if ($data->email_active == true && empty($data->otp)) {
             $api_token = Str::random(50);
-            $user = User::query()->where('identity', $request->identity)->update(['api_token' => $api_token]);   
+            $user = User::query()->where('email', $request->email)->update(['api_token' => $api_token]);   
         }
         //FALTA LA ACCION EN CASO DE NO CUMPLIR ESTA CONDICION...
         //PUEDE SER UN METODO DE REINICIAR USUARIO...

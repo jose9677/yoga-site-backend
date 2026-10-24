@@ -16,6 +16,10 @@ class Action extends Model
         'method'
     ];
 
+    protected $casts = [
+        'active' => 'boolean',
+    ];
+
     protected $table = 'actions';
     protected $primaryKey = 'id_action';
     public $incrementing = false;

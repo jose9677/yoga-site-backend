@@ -20,7 +20,7 @@ return new class extends Migration
             ->constrained('modules', 'id_module') // Indica la tabla y su llave primaria personalizada
             ->onUpdate('cascade');
 
-            $table->string('route', 255)->nullable()->after('id_module');
+            $table->string('route', 255)->nullable();
             $table->string('method', 255)->nullable();
             $table->timestamps();
         });

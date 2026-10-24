@@ -19,12 +19,12 @@ class RolesSeeder extends Seeder
         ]);
 
         Rol::create([
-            'description' => 'ANALISTA',
+            'description' => 'PROFESOR',
             'active' => true
         ]);
 
         Rol::create([
-            'description' => 'CONSULTA',
+            'description' => 'ESTUDIANTE',
             'active' => true
         ]);
     }

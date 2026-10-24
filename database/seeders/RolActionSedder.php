@@ -24,7 +24,17 @@ class RolActionSedder extends Seeder
             'id_action' => 2
         ]);
 
-        //ANALISTA...
+        RolAction::create([
+            'id_rol' => 1,
+            'id_action' => 3
+        ]);
+
+        RolAction::create([
+            'id_rol' => 1,
+            'id_action' => 4
+        ]);
+
+        //PROFESOR...
         RolAction::create([
             'id_rol' => 2,
             'id_action' => 1

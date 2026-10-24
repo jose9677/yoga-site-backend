@@ -15,6 +15,10 @@ class Module extends Model
         'updated_at'
     ];
 
+    protected $casts = [
+        'active' => 'boolean',
+    ];
+
     protected $table = 'modules';
     protected $primaryKey = 'id_module';
     public $incrementing = false;

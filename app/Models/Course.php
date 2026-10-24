@@ -15,6 +15,10 @@ class Course extends Model
         'updated_at'
     ];
 
+    protected $casts = [
+        'active' => 'boolean',
+    ];
+
     public function modules()
     {
         return $this->hasMany(Module::class, 'id_course', 'id_course');
