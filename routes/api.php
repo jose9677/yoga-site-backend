@@ -9,7 +9,7 @@ Route::middleware(['auth:sanctum', 'pass'])->group(function () {
     Route::prefix('auth')->controller(AuthController::class)->group(function (){
         Route::put('active-user/{email}', 'activeUser');
         Route::put('desactive-user/{email}', 'desactiveUser');
-        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::post('/logout', [AuthController::class, 'logout'])->withoutMiddleware(['pass']);
         Route::get('/', [AuthController::class, 'detailsUser']);
         Route::get('/{email}', [AuthController::class, 'getUserById']);
     });

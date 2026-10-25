@@ -134,7 +134,7 @@ class AuthController extends Controller
         // Borra el token actual que se está usando para la petición
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'Sesión cerrada y token eliminado.']);
+        return response()->json(['message' => 'Session closed and token deleted.']);
     }
 
     public function detailsUser()
