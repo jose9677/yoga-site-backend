@@ -105,12 +105,15 @@ class AuthController extends Controller
             return response()->json(['error' => 'Inactive User', 'code' => '003'], 400);
         }
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The credentials are incorrect.'],
             ]);
         }
         
+        //pPara evitar multiples sesiones borramos todos los tokens previos antes de crear el nuevo...
+        $user->tokens()->delete();
+
         // Generamos el token. En Sanctum, el token es "texto plano" una sola vez.
         $token = $user->createToken($request->device_name)->plainTextToken;
         
