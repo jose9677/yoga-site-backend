@@ -57,19 +57,36 @@ class AuthController extends Controller
     DB::beginTransaction();
     
     try {
+        $user_model = new User();
+        $user = $user_model->register($request);
+
+        $saved_document = null;
+
+        // Cargar foto de perfil
+        if ($request->hasFile('document')) {
+            $profile_pic_controller = new DocumentsController();
+            $saved_document = $profile_pic_controller->uploadProfilePic($request);
+        }
         
-        $user = new User();
-        $user = $user->register($request);
-        
-        // Generamos el token de una vez para que el usuario quede logueado tras registrarse
         $token = $user->createToken('angular_app')->plainTextToken;
 
         Mail::to($user->email)->queue(new RegisterMailable());
 
         DB::commit();
-    } catch (Exception $e) {
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        // ¡Esto es clave para atrapar los errores del $request->validate()!
         DB::rollBack();
-        return $e->getMessage();
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Validation error',
+            'errors' => $e->errors()
+        ], 422);
+    } catch (\Throwable $e) {
+        DB::rollBack();
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage()
+        ], 400);
     }
 
     return response()->json([
@@ -77,7 +94,8 @@ class AuthController extends Controller
         'message' => 'Usuario creado exitosamente',
         'data'    => [
             'user'  => $user,
-            'token' => $token
+            'token' => $token,
+            'doc'   => $saved_document
         ]
     ], 201);
 }

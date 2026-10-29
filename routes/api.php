@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DocumentsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,4 +24,9 @@ Route::prefix('app')->controller(AuthController::class)->group(function (){
     Route::post('validate-user', 'validateUser');//
     Route::put('change-password', 'changePassword');//
     Route::put('refresh-otp', 'refreshOTP');//
+    Route::post('upload-file', 'uploadFile');//
 })->withoutMiddleware(['auth:sanctum']);   
+
+Route::prefix('test')->controller(DocumentsController::class)->group(function(){
+    Route::post('upload-file', 'uploadProfilePic');
+})->withoutMiddleware(['auth:sanctum']);
