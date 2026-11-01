@@ -20,7 +20,6 @@ use Illuminate\Support\Str;
         's_a',
         'p_n',
         's_n',
-        'login',
         'password',
         'active',
         'email_active',
@@ -87,7 +86,6 @@ class User extends Authenticatable
             'p_n' => Str::upper($request->p_n),
             's_n' => Str::upper($request->s_n),
             'email' => $request->email,
-            'login' => $request->login,
             'password' => $request->password,
             'active' => false,
             'email_active' => false,
@@ -129,6 +127,7 @@ class User extends Authenticatable
     {
         User::query()->where('otp', $request->otp)->update([
             'otp' => null, 
+            'active' => true,
             'email_active' => true,
             'email_verified_at' => now()
             ]);

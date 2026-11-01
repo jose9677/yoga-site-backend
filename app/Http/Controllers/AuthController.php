@@ -27,7 +27,6 @@ class AuthController extends Controller
             'p_n' => 'required|string',
             's_n' => 'nullable|string',
             'email' => 'required|email',
-            'login' => 'required|string',
             
             'password' => [ 'required',
                             Password::min(8)
@@ -70,7 +69,7 @@ class AuthController extends Controller
         
         $token = $user->createToken('angular_app')->plainTextToken;
 
-        Mail::to($user->email)->queue(new RegisterMailable());
+        Mail::to($user->email)->queue(new RegisterMailable($user->otp));
 
         DB::commit();
     } catch (\Illuminate\Validation\ValidationException $e) {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Document;
+use App\Models\DocumentCourse;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -45,6 +46,41 @@ class DocumentsController extends Controller
             1,
             //$request->id_document_type, 
             $request->id_course
+        );
+
+        return $saved_document;
+    }
+
+    public function uploadCoursePic(Request $request, $id_course)
+    {
+        // 1. Validaciones básicas en el controlador
+        $request->validate([
+            'document' => 'required|file|max:5120', // Máximo 5MB
+        ]);
+
+        $file = $request->file('document');
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        // 2. Validar extensión usando tu configuración
+        $extensions = config('env.extensionsFileUserDocuments', ['jpg', 'jpeg', 'png', 'pdf']);
+        if (!in_array($extension, $extensions)) {
+            throw new Exception("Invalid file extension", 1);
+        }
+
+        // 3. Validar si ya existe un documento activo de este tipo para este usuario
+        $document_exists = DocumentCourse::where('id_course', $id_course)
+            ->where('active', true)
+            ->exists();
+
+        if ($document_exists) {
+            throw new Exception("This course already has an image uploaded.", 1);
+        }
+
+        $document_model = new DocumentCourse();
+        $saved_document = $document_model->uploadCoursePic(
+            $file, 
+            $id_course,
+            $request->title
         );
 
         return $saved_document;

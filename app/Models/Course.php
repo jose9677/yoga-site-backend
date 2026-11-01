@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Course extends Model
 {
@@ -22,6 +24,23 @@ class Course extends Model
     public function modules()
     {
         return $this->hasMany(Module::class, 'id_course', 'id_course');
+    }
+
+    public function documents()
+    {
+        return $this->hasMany(DocumentCourse::class, 'id_course', 'id_course');
+    }
+
+    public function createCourse($request)
+    {
+        $course = Course::create([
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'email' => $request->input('email'),
+            'active' => true,
+        ]);
+
+        return $course;
     }
 
     protected $table = 'courses';

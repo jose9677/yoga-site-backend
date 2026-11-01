@@ -6,7 +6,7 @@ use App\Models\RolAction;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class RolActionSedder extends Seeder
+class RolActionSeeder extends Seeder
 {
     /**
      * Run the database seeds.
