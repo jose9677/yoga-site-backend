@@ -110,29 +110,18 @@
             box-shadow: 0 4px 12px rgba(12, 43, 103, 0.06);
         }
 
-        /* Sello Oficial Circular con Marca Personal de Pedro Luis */
-        .personal-seal {
-            width: 105px;
-            height: 105px;
-            border-radius: 50%;
-            background: radial-gradient(circle, #0C2B67 60%, #06193d 100%);
-            border: 3px double var(--azul-cielo);
-            box-shadow: 0 6px 16px rgba(12, 43, 103, 0.35);
+        /* Contenedor del Código QR */
+        .qr-container {
+            width: 82px;
+            height: 82px;
+            background-color: #ffffff;
+            border: 2px solid var(--azul-noche);
+            border-radius: 6px;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: #FFFFFF;
-            margin: 0 auto;
-            position: relative;
-        }
-        .personal-seal::before {
-            content: '';
-            position: absolute;
-            inset: -6px;
-            border-radius: 50%;
-            border: 1px stroke var(--azul-cielo);
-            opacity: 0.7;
+            padding: 3px;
+            box-shadow: 0 4px 12px rgba(12, 43, 103, 0.2);
         }
 
         /* Firma Manuscrita Realista de Pedro Luis */
@@ -165,7 +154,7 @@
         <div class="flex items-center gap-3">
             <span class="w-3 h-3 rounded-full bg-[#0C2B67]"></span>
             <h1 class="text-sm font-bold text-[#0C2B67] uppercase tracking-wider">
-                Opción 1: Elegancia Sutil en Crema (Marca Pedro Luis)
+                Opción 1: Elegancia Sutil en Crema (Con Código QR)
             </h1>
         </div>
 
@@ -266,7 +255,7 @@
             </p>
         </main>
 
-        <!-- PIE DEL CERTIFICADO (Con Firma Manuscrita y Sello del Instructor) -->
+        <!-- PIE DEL CERTIFICADO (Con Firma Manuscrita y Código QR a la derecha) -->
         <footer class="relative z-10 grid grid-cols-3 items-end pb-1 px-2 gap-4">
             
             <!-- Columna Izquierda: Metadatos y Validación -->
@@ -296,13 +285,12 @@
                 </p>
             </div>
 
-            <!-- Columna Derecha: Sello Personalizado de Marca -->
-            <div class="text-right">
-                <div class="personal-seal">
-                    <span class="text-[7px] uppercase tracking-widest font-bold text-[#A0C1FF]">ACREDITADO</span>
-                    <span class="text-[11px] font-extrabold tracking-wider font-cinzel text-white my-0.5">200 H</span>
-                    <span class="text-[7px] uppercase font-bold tracking-tighter text-[#A0C1FF]">PEDRO LUIS YOGA</span>
+            <!-- Columna Derecha: Código QR Integrado (desplazado más hacia la derecha) -->
+            <div class="text-right flex flex-col items-end pr-2">
+                <div class="qr-container">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=74x74&data=https://pedro-luis-yoga.com/verify/CERT-2026-554" alt="QR Verificación" width="74" height="74" class="block mx-auto">
                 </div>
+                <span class="text-[7.5px] uppercase tracking-widest font-bold text-[#0C2B67] mt-1 pr-1">Escanear para verificar</span>
             </div>
             
         </footer>

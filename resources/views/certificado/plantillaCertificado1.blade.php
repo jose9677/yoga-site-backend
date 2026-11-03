@@ -121,29 +121,18 @@
             box-shadow: 0 4px 10px rgba(12, 43, 103, 0.05);
         }
 
-        /* Sello Circular de Excelencia */
-        .seal-container {
-            width: 96px;
-            height: 96px;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--azul-noche) 65%, #071a40 100%);
-            border: 3px double var(--azul-cielo);
-            box-shadow: 0 4px 12px rgba(12, 43, 103, 0.3);
+        /* Contenedor del Código QR */
+        .qr-container {
+            width: 78px;
+            height: 78px;
+            background-color: #ffffff;
+            border: 2px solid var(--azul-noche);
+            border-radius: 6px;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: #ffffff;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .seal-container::before {
-            content: '';
-            position: absolute;
-            inset: -5px;
-            border-radius: 50%;
-            border: 1px dashed var(--azul-cielo);
+            padding: 3px;
+            box-shadow: 0 3px 8px rgba(12, 43, 103, 0.2);
         }
 
         /* Estilo para la firma manuscrita */
@@ -251,7 +240,7 @@
             </p>
         </main>
 
-        <!-- PIE DEL CERTIFICADO (Metadatos, Firma y Sello) -->
+        <!-- PIE DEL CERTIFICADO (Metadatos, Firma y QR) -->
         <footer class="relative z-10 grid grid-cols-3 items-end pb-1 px-2 gap-4">
             
             <!-- Izquierda: Registro y Verificación -->
@@ -281,13 +270,12 @@
                 </p>
             </div>
 
-            <!-- Derecha: Sello Oficial Circular -->
-            <div class="text-right">
-                <div class="seal-container">
-                    <span class="text-[7px] uppercase tracking-widest font-bold opacity-80">Oficial</span>
-                    <span class="text-[11px] font-extrabold tracking-wider font-cinzel text-[#A0C1FF]">200 H</span>
-                    <span class="text-[7px] uppercase font-bold tracking-tighter">Yoga Integral</span>
+            <!-- Derecha: Código QR (más hacia la derecha) -->
+            <div class="text-right flex flex-col items-end pr-2">
+                <div class="qr-container">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=https://pedro-luis-yoga.com/verify/{{ $certificateCode ?? 'CERT-2026-554' }}" alt="QR Verificación" width="70" height="70" class="block mx-auto">
                 </div>
+                <span class="text-[7.5px] uppercase tracking-widest font-bold text-[#0C2B67] mt-1 pr-1">Escanear para verificar</span>
             </div>
             
         </footer>
